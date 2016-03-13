@@ -1,11 +1,42 @@
-#! /bin/bash
+#!/bin/bash
 
-set -e
+#set -e
 
 # Copy files from /usr/share/jenkins/ref into /var/jenkins_home
 # So the initial JENKINS-HOME is set with expected content.
 # Don't override, as this is just a reference setup, and use from UI
 # can then change this, upgrade plugins, etc.
+
+write_key() {
+	mkdir /var/jenkins_home/.ssh
+	mkdir ~/.ssh
+	echo "$1" >> /var/jenkins_home/.ssh/authorized_keys
+	echo "$1" >> ~/.ssh/authorized_keys
+	chown -Rf jenkins:jenkins /var/jenkins_home/.ssh
+	chmod 0700 -R /var/jenkins_home/.ssh
+	chmod 0700 -R ~/.ssh/
+	echo "HOME: "
+	ls -lsa ~/ ~/.ssh/
+
+}
+
+JENKINS_SLAVE_SSH_PUBKEY="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD7muO/wzoh9ntayr3MH5IoJJTi04EtLJ8VbLLKVPCT4FA7VP157eBlgs85i8wOJ7C10kqw0d1TCxgNiEQJV8P8xcliY97jC+EJmPCcq7RyvygTTq999fHXKuzw4xfDuHaREEKDKXnDNBhScNkimu2xjKVlbmJzBfG96dOs/Xi3WehbCpCjvQeO1XlwFDG5Mbne+1eWmSfqZbcFanCy4g1nWlOegpy/piDYkhjmTMvJBQvM9T71hstNAjJY87gOYZsWispkSS+g9IduAjPOOq6MUfMX8jnNsAacK3M9UoJredoanwfjR/SSWT8U0aNNt78xucwqB+qwxgv5QEXdVycl nghi_nguyenvan@MAY107"
+
+if [[ $JENKINS_SLAVE_SSH_PUBKEY == ssh-* ]]; then
+  write_key "${JENKINS_SLAVE_SSH_PUBKEY}"
+fi
+if [[ $# -gt 0 ]]; then
+  if [[ $1 == ssh-* ]]; then
+    write_key "$1"
+    shift 1
+  else
+    exec "$@"
+  fi
+fi
+#exec /usr/sbin/sshd -D $@
+nohup /usr/sbin/sshd &
+
+
 copy_reference_file() {
 	f="${1%/}"
 	b="${f%.override}"

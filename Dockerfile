@@ -45,9 +45,16 @@ EXPOSE 8080
 # will be used by attached slave agents:
 EXPOSE 50000
 
+# setup SSH server
+RUN apt-get install -y openssh-server
+RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+RUN mkdir /var/run/sshd
+
+EXPOSE 22
+
 ENV COPY_REFERENCE_FILE_LOG $JENKINS_HOME/copy_reference_file.log
 
-USER jenkins
+#USER jenkins
 
 COPY jenkins.sh /usr/local/bin/jenkins.sh
 ENTRYPOINT ["/bin/tini", "--", "/usr/local/bin/jenkins.sh"]

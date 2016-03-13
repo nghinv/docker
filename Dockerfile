@@ -1,6 +1,6 @@
 FROM java:8-jdk
 
-RUN apt-get update && apt-get install -y wget git curl zip && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y vim xvfb fluxbox x11vnc wget git curl zip apt-utils && rm -rf /var/lib/apt/lists/*
 
 ENV JENKINS_HOME /var/jenkins_home
 ENV JENKINS_SLAVE_AGENT_PORT 50000
@@ -46,7 +46,7 @@ EXPOSE 8080
 EXPOSE 50000
 
 # setup SSH server
-RUN apt-get install -y openssh-server
+RUN apt-get update && apt-get install -y openssh-server
 RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
 RUN mkdir /var/run/sshd
 

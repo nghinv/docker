@@ -1,0 +1,30 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: steve
+Build-Jdk: 1.6.0_65
+Extension-Name: dependency-check-jenkins-plugin
+Specification-Title: Dependency-Check is a utility that identifies pro
+ ject dependencies and checks if there are any known, publicly disclos
+ ed, vulnerabilities. This tool can be part of the solution to the OWA
+ SP Top 10 2013: A9 - Using Components with Known Vulnerabilities. Thi
+ s plug-in can independently execute a Dependency-Check analysis and v
+ isualize results.
+Specification-Vendor: OWASP
+Implementation-Vendor: OWASP
+Implementation-Title: dependency-check-jenkins-plugin
+Implementation-Version: 1.3.5
+Plugin-Class: org.jenkinsci.plugins.DependencyCheck.DependencyCheckPlu
+ gin
+Group-Id: org.jenkins-ci.plugins
+Short-Name: dependency-check-jenkins-plugin
+Long-Name: OWASP Dependency-Check Plugin
+Url: http://wiki.jenkins-ci.org/display/JENKINS/OWASP+Dependency-Check
+ +Plugin
+Plugin-Version: 1.3.5
+Hudson-Version: 1.596.1
+Jenkins-Version: 1.596.1
+Plugin-Dependencies: dashboard-view:2.9.6;resolution:=optional,analysi
+ s-core:1.76,token-macro:1.10;resolution:=optional,maven-plugin:2.4
+Plugin-Developers: Steve Springett::steve.springett@owasp.org
+

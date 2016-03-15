@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: aadetoye
+Build-Jdk: 1.8.0_31
+Extension-Name: zapper
+Specification-Title: Runs, after optionally building, OWASP ZAP for yo
+ ur automated security assessment
+Implementation-Title: zapper
+Implementation-Version: 1.0.7
+Group-Id: org.jenkins-ci.plugins
+Short-Name: zapper
+Long-Name: Jenkins OWASP ZAP Plugin
+Url: http://wiki.jenkins-ci.org/display/JENKINS/Zapper+Plugin
+Plugin-Version: 1.0.7
+Hudson-Version: 1.580.3
+Jenkins-Version: 1.580.3
+PluginFirstClassLoader: true
+Plugin-Developers: Adedayo Adetoye:adedayo:dayo.dev@gmail.com
+

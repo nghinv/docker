@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: jglick
+Build-Jdk: 1.7.0_45
+Extension-Name: downstream-buildview
+Specification-Title: This plug-in allows you to view the full status a
+ ll the downstream builds so that we can graphically see that everythi
+ ng for this build has been completed successfully.
+Specification-Vendor: Ushus Technologies
+Implementation-Vendor: Ushus Technologies
+Implementation-Title: downstream-buildview
+Implementation-Version: 1.9
+Group-Id: org.jvnet.hudson.plugins
+Short-Name: downstream-buildview
+Long-Name: Downstream build view
+Url: https://wiki.jenkins-ci.org/display/JENKINS/Downstream+buildview+
+ plugin
+Plugin-Version: 1.9
+Hudson-Version: 1.509.3
+Jenkins-Version: 1.509.3
+Plugin-Developers: Shinod Mohandas:shinodkm:shinodkm@gmail.com,Rajesh 
+ Nair::rajesh.nair.mit@gmail.com
+

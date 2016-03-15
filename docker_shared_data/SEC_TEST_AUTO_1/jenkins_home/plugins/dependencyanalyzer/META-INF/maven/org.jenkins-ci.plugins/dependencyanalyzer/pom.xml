@@ -1,0 +1,80 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.jenkins-ci.plugins</groupId>
+		<artifactId>plugin</artifactId>
+		<version>1.424</version>
+	</parent>
+
+	<artifactId>dependencyanalyzer</artifactId>
+	<packaging>hpi</packaging>
+	<version>0.7</version>
+	<name>Jenkins Dependency Analyzer Plugin</name>
+	<url>http://wiki.jenkins-ci.org/display/JENKINS/Dependency+Analyzer+Plugin</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+  
+	<scm>
+		<connection>scm:git:git://github.com/jenkinsci/dependency-analyzer-plugin.git</connection>
+		<developerConnection>scm:git:git@github.com:jenkinsci/dependency-analyzer-plugin.git</developerConnection>
+		<url>https://github.com/jenkinsci/dependency-analyzer-plugin.git</url>
+		<tag>dependencyanalyzer-0.7</tag>
+	</scm>
+
+	<developers>
+		<developer>
+			<id>vsellier</id>
+			<name>Vincent Sellier</name>
+		</developer>
+		<developer>
+			<id>ejouvin</id>
+			<name>Etienne Jouvin</name>
+		</developer>
+	</developers>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.jenkins-ci.main</groupId>
+			<artifactId>maven-plugin</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<goals>deploy</goals>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>repo.jenkins-ci.org</id>
+			<url>http://repo.jenkins-ci.org/public/</url>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>repo.jenkins-ci.org</id>
+			<url>http://repo.jenkins-ci.org/public/</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+<!--
+	<distributionManagement>
+		<repository>
+			<id>maven.jenkins-ci.org</id>
+			<url>http://maven.jenkins-ci.org:8081/content/repositories/releases/</url>
+		</repository>
+	</distributionManagement>
+-->
+
+</project>

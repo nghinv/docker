@@ -36,6 +36,8 @@ fi
 #exec /usr/sbin/sshd -D $@
 nohup /usr/sbin/sshd &
 
+/etc/init.d/mysql start
+
 
 copy_reference_file() {
 	f="${1%/}"

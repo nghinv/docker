@@ -3,7 +3,7 @@
 
 FROM java:8-jdk
 
-RUN apt-get update && apt-get install -y vim xvfb fluxbox x11vnc wget git curl zip apt-utils imagemagick graphviz 
+RUN apt-get update && apt-get install -y vim xvfb fluxbox x11vnc wget git curl zip apt-utils imagemagick graphviz lbzip2 libgtk-3-0 
 
 #RUN debconf-set-selections <<< 'mysql-server mysql-server/root_password password exo'
 #RUN debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password exo'
@@ -65,6 +65,19 @@ RUN mkdir /var/run/sshd
 EXPOSE 22
 
 ENV COPY_REFERENCE_FILE_LOG $JENKINS_HOME/copy_reference_file.log
+
+
+# EXO working dir
+ENV EXO_WORKING_DIR /java/exo-working/
+VOLUME /java/exo-working/
+
+RUN curl -fL https://download-installer.cdn.mozilla.net/pub/firefox/releases/21.0b7/linux-x86_64/en-US/firefox-21.0b7.tar.bz2  -o /java/exo-working/firefox-21.0b7.tar.bz2 && pushd /java/exo-working/ && tar xf firefox-21.0b7.tar.bz2 && mv firefox firefox21 && ln -s firefox21 current_firefox && popd
+
+RUN curl -fL http://selenium-release.storage.googleapis.com/2.52/selenium-server-standalone-2.52.0.jar -o /java/exo-working/selenium-server-standalone-2.52.0.jar
+
+RUN curl -fL https://repository.exoplatform.org/service/local/repositories/exo-releases/content/org/exoplatform/platform/distributions/plf-community-tomcat-standalone/4.3.0/plf-community-tomcat-standalone-4.3.0.zip -o /java/exo-working/plf-community-tomcat-standalone-4.3.0.zip && unzip -q /java/exo-working/plf-community-tomcat-standalone-4.3.0.zip -d /java/exo-working/XSS_TC
+
+
 
 #USER jenkins
 

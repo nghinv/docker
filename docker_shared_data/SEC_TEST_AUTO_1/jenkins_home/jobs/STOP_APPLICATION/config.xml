@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <assignedNode>XSS-AUTO-1</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <jdk>(Default)</jdk>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+#
+#Killing process by name with awk &amp; force kill commands
+
+PNAME=&quot;plf-3.5.4 org.apache.catalina.startup.Bootstrap&quot;
+ for i in $PNAME; do
+    echo &quot; looking for process with name contains [$i] &quot;
+   PID=`ps aux | grep java | grep $i | awk &apos;{print $2}&apos;`
+   if [ ! -z &quot;$PID&quot; ]; then
+      echo &quot;detect $i (pid $PID), killing it&quot;
+     kill -9 $PID
+   else
+echo &quot;found no process with name contain [$i]&quot;
+   fi
+  done</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.BuildTrigger>
+      <childProjects>START_APPLICATION</childProjects>
+      <threshold>
+        <name>SUCCESS</name>
+        <ordinal>0</ordinal>
+        <color>BLUE</color>
+      </threshold>
+    </hudson.tasks.BuildTrigger>
+  </publishers>
+  <buildWrappers/>
+</project>

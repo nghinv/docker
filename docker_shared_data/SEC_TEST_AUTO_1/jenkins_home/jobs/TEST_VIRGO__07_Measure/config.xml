@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>sh ./jmeter-utils.sh KS_BENCH_WIKI_005 20 100 3600 &quot;&quot; 192.168.3.2 8080 Magellanic-CheckWith20Users</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>100</daysToKeep>
+        <numToKeep>300</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>STAGE</name>
+          <description></description>
+          <defaultValue>SECURITY_TEST</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>TESTSCRIPT</name>
+          <description></description>
+          <defaultValue>TEST_VIRGO</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>SELENIUM_TEST_SCRIPT</name>
+          <description></description>
+          <defaultValue>/java/exo-working/automation_xss_tc/plf/COMMON/automation_xss_confirm_scripts.sh</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>TEST_TARGET_OPTION</name>
+          <description></description>
+          <defaultValue>http://localhost:8080</defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <assignedNode>XSS-AUTO-1</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+
+nohup /usr/bin/Xvfb :99 -ac -noreset &amp;
+export DISPLAY=:99;
+echo $DISPLAY
+
+rm -f latestresult
+ln -s $HOME/testsuite/${TESTSCRIPT}_latestresult latestresult
+pushd $HOME/testsuite/
+rm -f ${TESTSCRIPT}_latestresult
+./jmeter-utils-testcontroller.sh ${STAGE} ${TESTSCRIPT}
+
+readlink -f latestresult
+grep &quot;success&quot; ${TESTSCRIPT}_testresult.log;
+last_code=$?;
+if [ ! ${last_code} -eq &quot;0&quot; ]; then
+   a=$((1/0))
+fi
+
+STAGE=COUNT_DOWN_TEST
+pushd $HOME/testsuite &amp;&amp; ./${JMETER_UTILS_TESTCONTROLLER}-3 ${STAGE} ${TESTSCRIPT}
+grep &quot;success&quot; ${TESTSCRIPT}_testresult.log;
+last_code=$?;
+if [ ! ${last_code} -eq &quot;0&quot; ]; then
+   a=$((1/0))
+fi</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>latestresult/*RESULT*.html</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>false</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.tasks.BuildTrigger>
+      <childProjects>TEST_VIRGO__09_PARSE_ACCESS_LOG,TEST_VIRGO__08_upload-reports</childProjects>
+      <threshold>
+        <name>FAILURE</name>
+        <ordinal>2</ordinal>
+        <color>RED</color>
+        <completeBuild>true</completeBuild>
+      </threshold>
+    </hudson.tasks.BuildTrigger>
+    <hudson.plugins.descriptionsetter.DescriptionSetterPublisher plugin="description-setter@1.10">
+      <regexp>firstline=([^!]+)!([^ \t]+) ([^ \t]+) ([^ \t]+) ([^ \t]+) ([^ \t]+) ([^ \t]+) ([^ \t]+) ([^ \t]+) ([^ \t]+) ([^ \t]+) ([^ \t]+) ([^ \t]+) ([^ \t]+)</regexp>
+      <regexpForFailed>firstline=([^!]+)!([^ \t]+) ([^ \t]+) ([^ \t]+) ([^ \t]+) ([^ \t]+) ([^ \t]+) ([^ \t]+) ([^ \t]+) ([^ \t]+) ([^ \t]+) ([^ \t]+) ([^ \t]+) ([^ \t]+)</regexpForFailed>
+      <description>\14 -&gt; \2 (\5)</description>
+      <descriptionForFailed>\14 -&gt; \2 (\5)</descriptionForFailed>
+      <setForMatrix>false</setForMatrix>
+    </hudson.plugins.descriptionsetter.DescriptionSetterPublisher>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.16">
+      <strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
+        <timeoutMinutes>40000</timeoutMinutes>
+      </strategy>
+      <operationList>
+        <hudson.plugins.build__timeout.operations.FailOperation/>
+      </operationList>
+    </hudson.plugins.build__timeout.BuildTimeoutWrapper>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.7.4"/>
+  </buildWrappers>
+</project>

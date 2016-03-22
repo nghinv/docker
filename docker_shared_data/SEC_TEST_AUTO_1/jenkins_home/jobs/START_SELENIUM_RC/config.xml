@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <assignedNode>XSS-AUTO-1</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <jdk>(Default)</jdk>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+#
+
+set -xv
+
+cat $0
+nohup /usr/bin/Xvfb :99 -ac -noreset &amp;
+
+JAVA_HOME=&quot;/java/jdk1.6&quot;
+PATH=&quot;${JAVA_HOME}/bin:$PATH&quot;
+
+export LD_LIBRARY_PATH=&quot;/usr/lib/firefox/&quot;; export PATH=&quot;$PATH:${LD_LIBRARY_PATH}&quot;; export DISPLAY=:99;
+
+PLF_HOST=127.0.0.1
+SELENIUM_RC_DIR=&quot;/java/exo-working/security-testing/testsuite_secu/tools/SeleniumRC&quot;
+SELENIUM_RC_VERSION=&quot;selenium-server-standalone-2.24.1&quot;
+SELENIUM_TEST_SUITE_PLF=&quot;/java/exo-working/security-testing_local/testsuite_secu/testsuites/candidate/PLF/PLF_testsuite_all.html&quot;
+SELENIUM_TEST_SUITE_CS=&quot;/java/exo-working/security-testing_local/testsuite_secu/testsuites/candidate/CS/Snifftest/CS_SNF_Testsuite.html&quot;
+SELENIUM_TEST_SUITE_KS=&quot;/java/exo-working/security-testing_local/testsuite_secu/testsuites/candidate/KS/Snifftest/KS_SNF_Testsuite.html&quot;
+SELENIUM_TEST_SUITE_SOC=&quot;/java/exo-working/security-testing_local/testsuite_secu/testsuites/candidate/SOC/SOC_TestSuite_all.html&quot;
+SELENIUM_TEST_SUITE_GTN=&quot;/java/exo-working/security-testing_local/testsuite_secu/testsuites/candidate/eXoGTN/EXOGTN_TestSuite_all.html&quot;
+SELENIUM_TEST_SUITE_ECMS=&quot;/java/exo-working/security-testing_local/testsuite_secu/testsuites/candidate/ECMS/ECMS_Testsuite_all.html&quot;
+SELENIUM_TEST_REPORT=&quot;/Output/Selenium_TestResult_$(date +&quot;%Y-%m-%d_%H-%M-%S&quot;)&quot;
+
+echo &quot;==== WAITING FOR SELENIUM RC STARTUP ====&quot;
+cd ${SELENIUM_RC_DIR}
+
+echo &quot;==== SELENIUM RC WITH PLF TESTSUITE ====&quot;
+
+java -jar ${SELENIUM_RC_VERSION}.jar -timeout 500000 -userExtensions user-extensions.js -htmlsuite &quot;*firefox /usr/lib/firefox/firefox-bin&quot; &quot;http://${PLF_HOST}:8080/&quot; &quot;${SELENIUM_TEST_SUITE_PLF}&quot; &quot;${SELENIUM_RC_DIR}${SELENIUM_TEST_REPORT}&quot; -debug
+
+echo &quot;==== SELENIUM RC WITH CS TESTSUITE ====&quot;
+
+java -jar ${SELENIUM_RC_VERSION}.jar -timeout 500000 -userExtensions user-extensions.js -htmlsuite &quot;*firefox /usr/lib/firefox/firefox-bin&quot; &quot;http://${PLF_HOST}:8080/&quot; &quot;${SELENIUM_TEST_SUITE_CS}&quot; &quot;${SELENIUM_RC_DIR}${SELENIUM_TEST_REPORT}&quot; -debug
+
+echo &quot;==== SELENIUM RC WITH KS TESTSUITE ====&quot;
+
+java -jar ${SELENIUM_RC_VERSION}.jar -timeout 500000 -userExtensions user-extensions.js -htmlsuite &quot;*firefox /usr/lib/firefox/firefox-bin&quot; &quot;http://${PLF_HOST}:8080/&quot; &quot;${SELENIUM_TEST_SUITE_KS}&quot; &quot;${SELENIUM_RC_DIR}${SELENIUM_TEST_REPORT}&quot; -debug
+
+echo &quot;==== SELENIUM RC WITH SOC TESTSUITE ====&quot;
+
+java -jar ${SELENIUM_RC_VERSION}.jar -timeout 500000 -userExtensions user-extensions.js -htmlsuite &quot;*firefox /usr/lib/firefox/firefox-bin&quot; &quot;http://${PLF_HOST}:8080/&quot; &quot;${SELENIUM_TEST_SUITE_SOC}&quot; &quot;${SELENIUM_RC_DIR}${SELENIUM_TEST_REPORT}&quot; -debug
+
+echo &quot;==== SELENIUM RC WITH GTN TESTSUITE ====&quot;
+
+java -jar ${SELENIUM_RC_VERSION}.jar -timeout 500000 -userExtensions user-extensions.js -htmlsuite &quot;*firefox /usr/lib/firefox/firefox-bin&quot; &quot;http://${PLF_HOST}:8080/&quot; &quot;${SELENIUM_TEST_SUITE_GTN}&quot; &quot;${SELENIUM_RC_DIR}${SELENIUM_TEST_REPORT}&quot; -debug
+
+echo &quot;==== SELENIUM RC WITH ECMS TESTSUITE ====&quot;
+
+java -jar ${SELENIUM_RC_VERSION}.jar -timeout 500000 -userExtensions user-extensions.js -htmlsuite &quot;*firefox /usr/lib/firefox/firefox-bin&quot; &quot;http://${PLF_HOST}:8080/&quot; &quot;${SELENIUM_TEST_SUITE_ECMS}&quot; &quot;${SELENIUM_RC_DIR}${SELENIUM_TEST_REPORT}&quot; -debug
+
+echo &quot;==== Prepare for the next step ====&quot;
+rm -rf /java/exo-working/security-testing/testsuite_secu/PLF_log
+mkdir /java/exo-working/security-testing/testsuite_secu/PLF_log
+chmod 777 -R /java/exo-working/security-testing/testsuite_secu/PLF_log</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.BuildTrigger>
+      <childProjects>COPY_ACCESS_LOG</childProjects>
+      <threshold>
+        <name>SUCCESS</name>
+        <ordinal>0</ordinal>
+        <color>BLUE</color>
+      </threshold>
+    </hudson.tasks.BuildTrigger>
+  </publishers>
+  <buildWrappers/>
+</project>

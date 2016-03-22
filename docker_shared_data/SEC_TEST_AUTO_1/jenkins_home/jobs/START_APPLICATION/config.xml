@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <assignedNode>XSS-AUTO-1</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <jdk>Sun SDK 1.6.0 64bits</jdk>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+#
+
+APATH=&quot;/java/exo-working/security-testing_local/temp_PLF/exo.platform.packaging.tomcat-3.5.7/tomcat-bundle&quot;
+
+cd ${APATH}
+rm -f logs/*
+rm -f gatein/logs/*
+nohup ./start_eXo.sh &gt; nohup.out 2&gt;&amp;1 &amp;
+echo &quot;waiting for PLF startup success in the file `readlink -f nohup.out`&quot;
+
+sleep 5
+match_count=`tail -500 nohup.out | grep -c &quot;Server startup&quot;`
+
+while true; do
+    if [ ${match_count} -lt 1 ]; then
+        match_count=`tail -500 nohup.out | grep -c &quot;Server startup&quot;`
+    	sleep 5
+   else
+        echo &quot;--------  PLF startup success -------- &quot;
+        cat nohup.out
+       break
+    fi
+done</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.BuildTrigger>
+      <childProjects>START_SELENIUM_RC</childProjects>
+      <threshold>
+        <name>SUCCESS</name>
+        <ordinal>0</ordinal>
+        <color>BLUE</color>
+      </threshold>
+    </hudson.tasks.BuildTrigger>
+  </publishers>
+  <buildWrappers/>
+</project>

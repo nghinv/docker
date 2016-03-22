@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <assignedNode>XSS-AUTO-1</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <jdk>(Default)</jdk>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+
+set -xv
+PLF_LOG_DIR=&quot;/java/exo-working/security-testing_local/temp_PLF/exo.platform.packaging.tomcat-3.5.7/tomcat-bundle/logs&quot;
+ACCESS_LOG_FILENAME=`find ${PLF_LOG_DIR} -name &quot;*access_log*&quot; -print`
+
+echo &quot;==== Copy PLF access log ====&quot;
+#scp  ${ACCESS_LOG_FILENAME} tester@127.0.0.1:/java/exo-working/security-testing/testsuite_secu/PLF_log
+cp ${ACCESS_LOG_FILENAME} /java/exo-working/security-testing/testsuite_secu/PLF_log
+</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.BuildTrigger>
+      <childProjects>START_PARSER</childProjects>
+      <threshold>
+        <name>SUCCESS</name>
+        <ordinal>0</ordinal>
+        <color>BLUE</color>
+      </threshold>
+    </hudson.tasks.BuildTrigger>
+  </publishers>
+  <buildWrappers/>
+</project>

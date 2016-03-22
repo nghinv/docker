@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<build>
+  <actions>
+    <hudson.model.CauseAction>
+      <causes>
+        <hudson.model.Cause_-UpstreamCause>
+          <upstreamProject>START_APPLICATION</upstreamProject>
+          <upstreamUrl>job/START_APPLICATION/</upstreamUrl>
+          <upstreamBuild>22</upstreamBuild>
+          <upstreamCauses>
+            <hudson.model.Cause_-UpstreamCause>
+              <upstreamProject>STOP_APPLICATION</upstreamProject>
+              <upstreamUrl>job/STOP_APPLICATION/</upstreamUrl>
+              <upstreamBuild>17</upstreamBuild>
+              <upstreamCauses>
+                <hudson.model.Cause_-UserIdCause>
+                  <userId>anhpp</userId>
+                </hudson.model.Cause_-UserIdCause>
+              </upstreamCauses>
+            </hudson.model.Cause_-UpstreamCause>
+          </upstreamCauses>
+        </hudson.model.Cause_-UpstreamCause>
+      </causes>
+    </hudson.model.CauseAction>
+    <org.jvnet.hudson.plugins.DownstreamBuildViewAction>
+      <build class="build" reference="../../.."/>
+      <downstreamBuilds class="java.util.concurrent.ConcurrentHashMap">
+        <entry>
+          <string>COPY_ACCESS_LOG</string>
+          <int>14</int>
+        </entry>
+      </downstreamBuilds>
+    </org.jvnet.hudson.plugins.DownstreamBuildViewAction>
+  </actions>
+  <number>24</number>
+  <result>SUCCESS</result>
+  <duration>13549619</duration>
+  <charset>UTF-8</charset>
+  <keepLog>false</keepLog>
+  <builtOn>Security-test-headless-mercury2</builtOn>
+  <workspace>/java/jenkins/workspace/START_SELENIUM_RC</workspace>
+  <hudsonVersion>1.447</hudsonVersion>
+  <scm class="hudson.scm.NullChangeLogParser"/>
+  <culprits/>
+</build>

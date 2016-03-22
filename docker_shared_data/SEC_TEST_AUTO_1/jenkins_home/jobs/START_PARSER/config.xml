@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <assignedNode>XSS-AUTO-1</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <jdk>(Default)</jdk>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+#
+
+PARSER_DIR=&quot;/java/exo-working/security-testing_local/testsuite_secu/testscripts/&quot;
+ACCESS_LOG_DIR=&quot;/java/exo-working/security-testing/testsuite_secu/PLF_log&quot;
+ACCESS_LOG=`cd ${ACCESS_LOG_DIR}; ls -ABrt1 --group-directories-first | tail -n1`
+W3AF_TEST_TARGET_DIR=&quot;/java/exo-working/security-testing_local/testsuite_secu/testscripts/Output&quot;
+W3AF_TEST_TARGET=&quot;${W3AF_TEST_TARGET_DIR}/W3af_TestTarget_$(date +&quot;%Y-%m-%d&quot;).txt&quot;
+TEST_PATTERN=&quot;${PARSER_DIR}/test_pattern.txt&quot;
+#PLF_HOST=&quot;http://127.0.0.1:8080&quot;
+PLF_HOST=&quot;http://192.168.5.4:8080&quot;
+
+cd ${PARSER_DIR}
+echo &quot;==== WAITING FOR THE FILTERING PROCESS FINISHED ====&quot;
+bash parser.sh -i ${ACCESS_LOG_DIR}/${ACCESS_LOG} -o ${W3AF_TEST_TARGET} -h ${PLF_HOST}
+echo &quot;==== Filter URLs ====&quot;
+while read j
+do
+if [[ ! &quot;x$j&quot; == &quot;x&quot; &amp;&amp; ! -z $j ]]; then
+ j=`echo $j | sed &apos;s|/|\\\/|g&apos;`
+echo &quot;... ++ processing with pattern: $j&quot;
+sed -i -r &quot;0,/$j/s/($j)/ \1/&quot; $W3AF_TEST_TARGET
+sed -i -r &quot;/$j/d&quot; $W3AF_TEST_TARGET
+echo &quot;... -- processing with pattern: $j&quot;
+fi
+done &lt;$TEST_PATTERN
+
+cd ${W3AF_TEST_TARGET_DIR}
+ if [ -r ${W3AF_TEST_TARGET} ]; then
+      echo &quot; ==== Finish filtering process ====&quot;     
+ else
+      echo &quot;==== Something wrong happens! Restart the parser! ====&quot;
+      bash parser.sh -i ${ACCESS_LOG_DIR}/${ACCESS_LOG} -o ${W3AF_TEST_TARGET} -h ${PLF_HOST}
+     echo &quot;==== Filter URLs ====&quot;
+     while read j
+     do
+      	 if [[ ! &quot;x$j&quot; == &quot;x&quot; &amp;&amp; ! -z $j ]]; then
+      	  j=`echo $j | sed &apos;s|/|\\\/|g&apos;`
+      	 echo &quot;... ++ processing with pattern: $j&quot;
+sed -i -r &quot;0,/$j/s/($j)/ \1/&quot; $W3AF_TEST_TARGET
+sed -i -r &quot;/$j/d&quot; $W3AF_TEST_TARGET
+echo &quot;... -- processing with pattern: $j&quot;
+fi
+      done &lt;$TEST_PATTERN
+
+ fi</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.BuildTrigger>
+      <childProjects>START_W3AF</childProjects>
+      <threshold>
+        <name>SUCCESS</name>
+        <ordinal>0</ordinal>
+        <color>BLUE</color>
+      </threshold>
+    </hudson.tasks.BuildTrigger>
+  </publishers>
+  <buildWrappers/>
+</project>

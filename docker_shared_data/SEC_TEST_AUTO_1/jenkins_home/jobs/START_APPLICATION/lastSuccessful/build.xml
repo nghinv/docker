@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<build>
+  <actions>
+    <hudson.model.CauseAction>
+      <causes>
+        <hudson.model.Cause_-UpstreamCause>
+          <upstreamProject>STOP_APPLICATION</upstreamProject>
+          <upstreamUrl>job/STOP_APPLICATION/</upstreamUrl>
+          <upstreamBuild>17</upstreamBuild>
+          <upstreamCauses>
+            <hudson.model.Cause_-UserIdCause>
+              <userId>anhpp</userId>
+            </hudson.model.Cause_-UserIdCause>
+          </upstreamCauses>
+        </hudson.model.Cause_-UpstreamCause>
+      </causes>
+    </hudson.model.CauseAction>
+    <org.jvnet.hudson.plugins.DownstreamBuildViewAction>
+      <build class="build" reference="../../.."/>
+      <downstreamBuilds class="java.util.concurrent.ConcurrentHashMap">
+        <entry>
+          <string>START_SELENIUM_RC</string>
+          <int>24</int>
+        </entry>
+      </downstreamBuilds>
+    </org.jvnet.hudson.plugins.DownstreamBuildViewAction>
+  </actions>
+  <number>22</number>
+  <result>SUCCESS</result>
+  <duration>166070</duration>
+  <charset>UTF-8</charset>
+  <keepLog>false</keepLog>
+  <builtOn>Security-test-headless-mercury2</builtOn>
+  <workspace>/java/jenkins/workspace/START_APPLICATION</workspace>
+  <hudsonVersion>1.447</hudsonVersion>
+  <scm class="hudson.scm.NullChangeLogParser"/>
+  <culprits/>
+</build>

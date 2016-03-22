@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<build>
+  <actions>
+    <hudson.model.CauseAction>
+      <causes>
+        <hudson.model.Cause_-UserIdCause>
+          <userId>anhpp</userId>
+        </hudson.model.Cause_-UserIdCause>
+      </causes>
+    </hudson.model.CauseAction>
+    <org.jvnet.hudson.plugins.DownstreamBuildViewAction>
+      <build class="build" reference="../../.."/>
+      <downstreamBuilds class="java.util.concurrent.ConcurrentHashMap">
+        <entry>
+          <string>START_APPLICATION</string>
+          <int>22</int>
+        </entry>
+      </downstreamBuilds>
+    </org.jvnet.hudson.plugins.DownstreamBuildViewAction>
+  </actions>
+  <number>17</number>
+  <result>SUCCESS</result>
+  <duration>329</duration>
+  <charset>UTF-8</charset>
+  <keepLog>false</keepLog>
+  <builtOn>Security-test-headless-mercury2</builtOn>
+  <workspace>/java/jenkins/workspace/STOP_APPLICATION</workspace>
+  <hudsonVersion>1.447</hudsonVersion>
+  <scm class="hudson.scm.NullChangeLogParser"/>
+  <culprits/>
+</build>

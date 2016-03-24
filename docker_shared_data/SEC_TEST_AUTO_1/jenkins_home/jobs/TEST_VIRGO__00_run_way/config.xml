@@ -1,0 +1,146 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>30</daysToKeep>
+        <numToKeep>100</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>STAGE</name>
+          <description></description>
+          <defaultValue>STOP_TEST</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>TESTSCRIPT</name>
+          <description></description>
+          <defaultValue>TEST_VIRGO</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>RESET_CODE</name>
+          <description>remove existing dataset and extract from the dataset archive</description>
+          <defaultValue>NO_RESET_CODE</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>QUICK_BUILD_FLOW</name>
+          <description>&lt;strong&gt;this field need a complete config line, to run a flow&lt;/strong&gt;
+&lt;br/&gt;
+&lt;quote&gt;
+/java/exo-working/VALIDATIONS/TQA-432/PLF-354_VISUALVM_PROFILING_PATCH_20120606 /mnt/nfs4/DATASETS/PLF/PLF3.5.x/3.5.x_02/NODATASET.zip plf_jcr plf_idm!PERF_PLF_INTRANET_99_SIMPLE_CALENDAR_HOMEPAGE 2 10 7200 9999 192.168.5.8 8080 CALENDAR_HOME_PATCH20120606_01 true true - - TQA-432_CALENDAR_HOME_PATCH20120606!eXoPLF.install.sh
+&lt;quote&gt;</description>
+          <defaultValue>NO_QUICK_BUILD_FLOW</defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <assignedNode>XSS-AUTO-1</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+
+EXO_WORKING_DIR=/java/exo-working
+
+if [ -d $EXO_WORKING_DIR ]; then
+  pushd $EXO_WORKING_DIR
+  
+  if [ ! -d automation_xss_tc_new ]; then
+    echo &quot;INFO: downloading automation_xss_tc_new&quot;
+    git clone https://github.com/nghinv/automation_xss_tc_new.git 
+    ln -s automation_xss_tc_new automation_xss_tc
+  fi
+  #download firefox
+  if [ ! -f firefox-21.0b7.tar.bz2 ]; then
+    if [ ! -d firefox21 ]; then
+      # remove firefox folder
+      rm -frv current_firefox || true
+      
+      # download firefox21
+      curl -fL https://download-installer.cdn.mozilla.net/pub/firefox/releases/21.0b7/linux-x86_64/en-US/firefox-21.0b7.tar.bz2  -o ${EXO_WORKING_DIR}/firefox-21.0b7.tar.bz2 
+      tar xf ${EXO_WORKING_DIR}/firefox-21.0b7.tar.bz2
+      
+      # choose ff21
+      mv firefox firefox21
+      ln -s firefox21 current_firefox
+    else
+      echo &quot;INFO: the folder firefox21 existing, abort the download process&quot;
+    fi
+  fi
+  
+  if [ ! -f selenium-server-standalone-2.52.0.jar ]; then
+    echo &quot;INFO: downloading selenium-server-standalone-2.52.0.jar&quot;
+    curl -fL http://selenium-release.storage.googleapis.com/2.52/selenium-server-standalone-2.52.0.jar -o ${EXO_WORKING_DIR}/selenium-server-standalone-2.52.0.jar
+  fi
+  
+  if [ ! -f plf-community-tomcat-standalone-4.3.0.zip ]; then
+    echo &quot;INFO: downloading plf-community-tomcat-standalone-4.3.0.zip&quot;
+    curl -fL https://repository.exoplatform.org/service/local/repositories/exo-releases/content/org/exoplatform/platform/distributions/plf-community-tomcat-standalone/4.3.0/plf-community-tomcat-standalone-4.3.0.zip -o ${EXO_WORKING_DIR}/plf-community-tomcat-standalone-4.3.0.zip
+    mkdir ${EXO_WORKING_DIR}/TC || true
+    if [ -d ${EXO_WORKING_DIR}/TC/current ]; then
+      echo &quot;INFO: removing ${EXO_WORKING_DIR}/TC/current&quot;
+      rm -rf ${EXO_WORKING_DIR}/TC/current
+    fi
+    unzip -q ${EXO_WORKING_DIR}/plf-community-tomcat-standalone-4.3.0.zip -d /tmp/PLF
+    TMP_PLF_DIR=`find /tmp/PLF -maxdepth 1 -mindepth 1`
+    if [ $? -eq 0 ]; then
+      mv $TMP_PLF_DIR/* ${EXO_WORKING_DIR}/TC/current/
+      # extract dataset
+      echo &quot;INFO: Extracting dataset&quot; # extract dataset
+      
+      pushd ${EXO_WORKING_DIR}/TC/current/
+      mkdir DATASET
+      pushd DATASET
+      # this dataset contain conf/server.xml and webapps/eXoResources.war together with gatein/data
+      tar xf ${EXO_WORKING_DIR}/automation_xss_tc/plf_templates/datasets/plf43comm/PLF43_DATASET_HSQL.tar.bz2
+      popd
+      cp DATASET/* . -R
+      rm -rf DATASET
+      echo &quot;INFO: ${EXO_WORKING_DIR}/TC/current/ is now ready to run&quot;
+      popd #to EXO_WORKING_DIR
+      
+      echo &quot;${EXO_WORKING_DIR}/TC/current/ RE_USE!SAMPLES 3600 SAMPLE_TEST_WITH_PLF43 SHOULD_WORK!eXoPLF.install.sh&quot;
+    fi
+  fi
+else
+  echo &quot;ERROR: Expect to have the folder $EXO_WORKING_DIR to exist&quot;
+  a=$((1/0))
+fi</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.BuildTrigger>
+      <childProjects>TEST_VIRGO__00_start-new-bridge</childProjects>
+      <threshold>
+        <name>SUCCESS</name>
+        <ordinal>0</ordinal>
+        <color>BLUE</color>
+        <completeBuild>true</completeBuild>
+      </threshold>
+    </hudson.tasks.BuildTrigger>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.16">
+      <strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
+        <timeoutMinutes>5</timeoutMinutes>
+      </strategy>
+      <operationList>
+        <hudson.plugins.build__timeout.operations.FailOperation/>
+      </operationList>
+    </hudson.plugins.build__timeout.BuildTimeoutWrapper>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.7.4"/>
+  </buildWrappers>
+</project>

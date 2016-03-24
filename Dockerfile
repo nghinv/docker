@@ -72,19 +72,8 @@ ENV COPY_REFERENCE_FILE_LOG $JENKINS_HOME/copy_reference_file.log
 
 
 # EXO working dir
-ENV EXO_WORKING_DIR ${EXO_WORKING_DIR}/
+ENV EXO_WORKING_DIR /java/exo-working
 VOLUME ${EXO_WORKING_DIR}/
-
-RUN curl -fL https://download-installer.cdn.mozilla.net/pub/firefox/releases/21.0b7/linux-x86_64/en-US/firefox-21.0b7.tar.bz2  -o ${EXO_WORKING_DIR}/firefox-21.0b7.tar.bz2 && pushd ${EXO_WORKING_DIR}/ && tar xf firefox-21.0b7.tar.bz2 && mv firefox firefox21 && ln -s firefox21 current_firefox && popd
-
-RUN curl -fL http://selenium-release.storage.googleapis.com/2.52/selenium-server-standalone-2.52.0.jar -o ${EXO_WORKING_DIR}/selenium-server-standalone-2.52.0.jar
-
-RUN curl -fL https://repository.exoplatform.org/service/local/repositories/exo-releases/content/org/exoplatform/platform/distributions/plf-community-tomcat-standalone/4.3.0/plf-community-tomcat-standalone-4.3.0.zip -o ${EXO_WORKING_DIR}/plf-community-tomcat-standalone-4.3.0.zip && unzip -q ${EXO_WORKING_DIR}/plf-community-tomcat-standalone-4.3.0.zip -d ${EXO_WORKING_DIR}/TC
-
-RUN pushd ${EXO_WORKING_DIR}/ && git clone https://github.com/nghinv/automation_xss_tc_new.git && ln -s automation_xss_tc_new automation_xss_tc
-RUN ln -s ${EXO_WORKING_DIR}/automation_xss_tc/testsuite $HOME/
-
-
 
 #USER jenkins
 

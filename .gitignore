@@ -1,4 +1,10 @@
-*.log
-docker_shared_data/SEC_TEST_AUTO_1/exo-working/
-jobs/*/nextBuildNumber
-jobs/*/builds
+**.log
+docker_shared_data/SEC_TEST_AUTO_1/exo-working/**
+**/jenkins_home/jobs/**/builds
+docker_shared_data/SEC_TEST_AUTO_1/jenkins_home/jobs/**/lastStable
+docker_shared_data/SEC_TEST_AUTO_1/jenkins_home/jobs/**/lastSuccessful
+docker_shared_data/SEC_TEST_AUTO_1/jenkins_home/jobs/**/nextBuildNumber
+docker_shared_data/SEC_TEST_AUTO_1/jenkins_home/jobs/**/workspace/
+docker_shared_data/SEC_TEST_AUTO_1/jenkins_home/queue.xml
+docker_shared_data/SEC_TEST_AUTO_1/jenkins_home/secrets/hudson.console.AnnotatedLargeText.consoleAnnotator
+docker_shared_data/SEC_TEST_AUTO_1/jenkins_home/secrets/hudson.model.Job.serverCookie

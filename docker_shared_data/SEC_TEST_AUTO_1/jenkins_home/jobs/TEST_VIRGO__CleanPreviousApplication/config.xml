@@ -38,7 +38,7 @@
   <builders>
     <hudson.tasks.Shell>
       <command>#!/bin/bash
-pushd $HOME/testsuite &amp;&amp; bash ./jmeter-utils-testcontroller.sh ${STAGE} ${TESTSCRIPT}
+pushd ${EXO_WORKING_DIR}/automation_xss_tc/testsuite &amp;&amp; bash ./jmeter-utils-testcontroller.sh ${STAGE} ${TESTSCRIPT}
 grep &quot;success&quot; ${TESTSCRIPT}_testresult.log;
 last_code=$?;
 if [ ! ${last_code} -eq &quot;0&quot; ]; then

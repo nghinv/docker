@@ -31,11 +31,7 @@
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>QUICK_BUILD_FLOW</name>
-          <description>&lt;strong&gt;this field need a complete config line, to run a flow&lt;/strong&gt;
-&lt;br/&gt;
-&lt;quote&gt;
-/java/exo-working/VALIDATIONS/TQA-432/PLF-354_VISUALVM_PROFILING_PATCH_20120606 /mnt/nfs4/DATASETS/PLF/PLF3.5.x/3.5.x_02/NODATASET.zip plf_jcr plf_idm!PERF_PLF_INTRANET_99_SIMPLE_CALENDAR_HOMEPAGE 2 10 7200 9999 192.168.5.8 8080 CALENDAR_HOME_PATCH20120606_01 true true - - TQA-432_CALENDAR_HOME_PATCH20120606!eXoPLF.install.sh
-&lt;quote&gt;</description>
+          <description></description>
           <defaultValue>NO_QUICK_BUILD_FLOW</defaultValue>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
@@ -52,21 +48,79 @@
   <builders>
     <hudson.tasks.Shell>
       <command>#!/bin/bash
-BUILD_STEP=$(( BUILD_NUMBER - LAST_BUILD_NUMBER ))
 
-pushd $HOME/testsuite
-if [ ! &quot;${QUICK_BUILD_FLOW}&quot; == &quot;NO_QUICK_BUILD_FLOW&quot; ]; then
-    echo &quot;${QUICK_BUILD_FLOW}&quot;&gt;&gt;${TESTSCRIPT}_CURRENT_CONFIG
-    echo &quot; ... the system will run a quick build flow with QUICK_BUILD_FLOW=${QUICK_BUILD_FLOW} ... &quot;
-fi
-echo &quot; ... +++ CURRENT CONFIG FILE:: +++ ....&quot;
-cat ${TESTSCRIPT}_CURRENT_CONFIG
-echo &quot; ... --- CURRENT CONFIG FILE:: --- ....&quot;
-pushd $HOME/testsuite &amp;&amp; bash jmeter-utils-testcontroller.sh ${STAGE} ${TESTSCRIPT} ${RESET_CODE}
-grep &quot;success&quot; ${TESTSCRIPT}_testresult.log;
-last_code=$?;
-if [ ! ${last_code} -eq &quot;0&quot; ]; then
-   a=$((1/0))
+EXO_WORKING_DIR=/java/exo-working
+
+if [ -d $EXO_WORKING_DIR ]; then
+  pushd $EXO_WORKING_DIR
+  
+  if [ ! -d automation_xss_tc_new ]; then
+    echo &quot;INFO: downloading automation_xss_tc_new&quot;
+    git clone https://github.com/nghinv/automation_xss_tc_new.git 
+    ln -s automation_xss_tc_new automation_xss_tc
+  fi
+  #download firefox
+  if [ ! -f firefox-21.0b7.tar.bz2 ]; then
+    if [ ! -d firefox21 ]; then
+      # remove firefox folder
+      rm -frv current_firefox || true
+      
+      # download firefox21
+      curl -fL https://download-installer.cdn.mozilla.net/pub/firefox/releases/21.0b7/linux-x86_64/en-US/firefox-21.0b7.tar.bz2  -o ${EXO_WORKING_DIR}/firefox-21.0b7.tar.bz2 
+      tar xf ${EXO_WORKING_DIR}/firefox-21.0b7.tar.bz2
+      
+      # choose ff21
+      mv firefox firefox21
+      ln -s firefox21 current_firefox
+    else
+      echo &quot;INFO: the folder firefox21 existing, abort the download process&quot;
+    fi
+  fi
+  
+  if [ ! -f selenium-server-standalone-2.52.0.jar ]; then
+    echo &quot;INFO: downloading selenium-server-standalone-2.52.0.jar&quot;
+    curl -fL http://selenium-release.storage.googleapis.com/2.52/selenium-server-standalone-2.52.0.jar -o ${EXO_WORKING_DIR}/selenium-server-standalone-2.52.0.jar
+  fi
+  
+  set -e
+  if [ ! -f plf-community-tomcat-standalone-4.3.0.zip ]; then
+    echo &quot;INFO: downloading plf-community-tomcat-standalone-4.3.0.zip&quot;
+    curl -fL https://repository.exoplatform.org/service/local/repositories/exo-releases/content/org/exoplatform/platform/distributions/plf-community-tomcat-standalone/4.3.0/plf-community-tomcat-standalone-4.3.0.zip -o ${EXO_WORKING_DIR}/plf-community-tomcat-standalone-4.3.0.zip
+  fi
+  
+  mkdir ${EXO_WORKING_DIR}/TC || true
+  if [ -d ${EXO_WORKING_DIR}/TC/current ]; then
+    echo &quot;INFO: removing ${EXO_WORKING_DIR}/TC/current&quot;
+    rm -rf ${EXO_WORKING_DIR}/TC/current/*
+  else
+    mkdir ${EXO_WORKING_DIR}/TC/current
+  fi
+  rm -rf /tmp/PLF || true
+  unzip -q ${EXO_WORKING_DIR}/plf-community-tomcat-standalone-4.3.0.zip -d /tmp/PLF
+  TMP_PLF_DIR=`find /tmp/PLF -maxdepth 1 -mindepth 1`
+  if [ $? -eq 0 ]; then
+    mv $TMP_PLF_DIR/* ${EXO_WORKING_DIR}/TC/current/
+    # extract dataset
+    echo &quot;INFO: Extracting dataset&quot; # extract dataset
+    
+    pushd ${EXO_WORKING_DIR}/TC/current/
+    mkdir DATASET
+    pushd DATASET
+    # this dataset contain conf/server.xml and webapps/eXoResources.war together with gatein/data
+    tar xf ${EXO_WORKING_DIR}/automation_xss_tc/testsuite/plf_templates/datasets/plf43comm/PLF43_DATASET_HSQL.tar.bz2
+    popd
+    cp DATASET/* . -R
+    rm -rf DATASET
+    echo &quot;INFO: ${EXO_WORKING_DIR}/TC/current/ is now ready to run&quot;
+    popd #to EXO_WORKING_DIR
+    
+    mkdir $HOME/.eXo/Platform/ || true
+    cp ${EXO_WORKING_DIR}/automation_xss_tc/testsuite/plf_templates/datasets/plf43comm/license.xml $HOME/.eXo/Platform/
+    echo &quot;${EXO_WORKING_DIR}/TC/current/ RE_USE!SAMPLES 3600 SAMPLE_TEST_WITH_PLF43 SHOULD_WORK!eXoPLF.install.sh&quot; &gt; ${EXO_WORKING_DIR}/automation_xss_tc/testsuite/TEST_VIRGO_CURRENT_CONFIG
+  fi
+else
+  echo &quot;ERROR: Expect to have the folder $EXO_WORKING_DIR to exist&quot;
+  a=$((1/0))
 fi</command>
     </hudson.tasks.Shell>
   </builders>

@@ -34,6 +34,16 @@
           <description></description>
           <defaultValue>http://localhost:8080</defaultValue>
         </hudson.model.StringParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>DEBUG_MODE</name>
+          <description></description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>false</string>
+              <string>true</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -54,8 +64,8 @@ export DISPLAY=:99;
 echo $DISPLAY
 
 rm -f latestresult
-ln -s $HOME/testsuite/${TESTSCRIPT}_latestresult latestresult
-pushd $HOME/testsuite/
+ln -s ${EXO_WORKING_DIR}/automation_xss_tc/testsuite/${TESTSCRIPT}_latestresult latestresult
+pushd ${EXO_WORKING_DIR}/automation_xss_tc/testsuite/
 rm -f ${TESTSCRIPT}_latestresult
 ./jmeter-utils-testcontroller.sh ${STAGE} ${TESTSCRIPT}
 
@@ -67,7 +77,7 @@ if [ ! ${last_code} -eq &quot;0&quot; ]; then
 fi
 
 STAGE=COUNT_DOWN_TEST
-pushd $HOME/testsuite &amp;&amp; ./${JMETER_UTILS_TESTCONTROLLER}-3 ${STAGE} ${TESTSCRIPT}
+pushd ${EXO_WORKING_DIR}/automation_xss_tc/testsuite &amp;&amp; ./jmeter-utils-testcontroller.sh ${STAGE} ${TESTSCRIPT}
 grep &quot;success&quot; ${TESTSCRIPT}_testresult.log;
 last_code=$?;
 if [ ! ${last_code} -eq &quot;0&quot; ]; then

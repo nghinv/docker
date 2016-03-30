@@ -2,30 +2,27 @@
 <project>
   <actions/>
   <description></description>
-  <logRotator class="hudson.tasks.LogRotator">
-    <daysToKeep>300</daysToKeep>
-    <numToKeep>300</numToKeep>
-    <artifactDaysToKeep>-1</artifactDaysToKeep>
-    <artifactNumToKeep>-1</artifactNumToKeep>
-  </logRotator>
   <keepDependencies>false</keepDependencies>
   <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>300</daysToKeep>
+        <numToKeep>300</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
           <name>PLF_HOST</name>
           <description></description>
-          <defaultValue>http://192.168.5.6:8080</defaultValue>
+          <defaultValue>http://localhost:8080</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>CONTINUE</name>
           <description></description>
           <defaultValue>true</defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>SERVER_ACCESS_LOG</name>
-          <description></description>
-          <defaultValue>qahudson@192.168.5.6:/java/exo-working/TC/SECU/PLF406_TC3_configured/logs/</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>TEST_SCRIPT</name>
@@ -51,72 +48,14 @@
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <jdk>(Default)</jdk>
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
       <command>#!/bin/bash
-if [ &quot;${DEBUG}&quot; == &quot;true&quot; ]; then
-   set -xv
-fi
-W3AF_FOLDER=&quot;/java/exo-working/security-testing/testsuite_secu/tools/w3af&quot;
-W3AF_SCRIPT_FILE_PATH=&quot;/java/exo-working/security-testing/testsuite_secu/testscripts/&quot;
-W3AF_CONFIG_FILE_NAME=&quot;testscript.w3af&quot;
-W3AF_CONFIG_FILE_PATH=&quot;/java/exo-working/security-testing/testsuite_secu/testscripts/${W3AF_CONFIG_FILE_NAME}&quot;
-W3AF_TEST_TARGET_DIR=&quot;/java/exo-working/security-testing_local/testsuite_secu/testscripts/Output/&quot;
-W3AF_TEST_CONFIG_DIR=&quot;/java/exo-working/security-testing_local/testsuite_secu/testscripts/temp&quot;
-W3AF_TEST_TARGET=`cd ${W3AF_TEST_TARGET_DIR}; ls W3af_TestTarget_* -ABrt1 | tail -n1`
-W3AF_TEST_RESULT=&quot;output-w3af.txt&quot;
-#PLF_AUTHEN_URL=&quot;http://127.0.0.1:8080/portal/login?initialURI=/portal/default\&amp;username=john\&amp;password=gtn&quot;
-#PLF_AUTHEN_URL=&quot;http://192.168.5.4:8080/company/en/home&quot;
-PLF_AUTHEN_URL=&quot;${PLF_HOST}/portal/login?initialURI=/portal/default\&amp;username=root\&amp;password=gtngtn&quot;
 
-SERVER_ACCESS_LOG_FILE=${SERVER_ACCESS_LOG}/localhost_access_log.$(date +&quot;%Y-%m-%d&quot;).txt
-PARSER_DIR=&quot;/java/exo-working/security-testing_local/testsuite_secu/testscripts/&quot;
-TEST_PATTERN=&quot;${PARSER_DIR}/test_pattern.txt&quot;
-W3AF_BLACKLIST_INPUT_DIR=&quot;/java/exo-working/security-testing_local/testsuite_secu/testscripts/Blacklist/Input&quot;
-mkdir -p ${W3AF_BLACKLIST_INPUT_DIR}
-W3AF_BLACKLIST_INPUT_FILE=`cd ${W3AF_BLACKLIST_INPUT_DIR}; ls -ABrt1 --group-directories-first | tail -n1`
-W3AF_BLACKLIST_OUTPUT_DIR=&quot;/java/exo-working/security-testing_local/testsuite_secu/testscripts/Blacklist/Output&quot;
-W3AF_BLACKLIST_OUTPUT_FILE=$W3AF_BLACKLIST_OUTPUT_DIR/&quot;W3af_Blacklist.txt&quot;
-
-cd ${W3AF_SCRIPT_FILE_PATH}
-echo &quot;==== WAITING FOR W3AF FINISHING ITS TASK ====&quot;
-timeout 70m ${W3AF_SCRIPT_FILE_PATH}/W3af_start_script.sh -m ${W3AF_BLACKLIST_INPUT_DIR} -b ${W3AF_BLACKLIST_INPUT_FILE} -n ${W3AF_BLACKLIST_OUTPUT_DIR} -o ${W3AF_BLACKLIST_OUTPUT_FILE} -s ${SERVER_ACCESS_LOG_FILE} -k ${PARSER_DIR} -h ${PLF_HOST} -c ${CONTINUE} -i ${W3AF_TEST_TARGET_DIR}${W3AF_TEST_TARGET} -d ${W3AF_FOLDER} -f ${W3AF_CONFIG_FILE_NAME} -p ${W3AF_CONFIG_FILE_PATH} -t ${TEST_PATTERN} -a ${PLF_AUTHEN_URL}|tee $W3AF_TEST_TARGET_DIR${JOB_NAME}_${BUILD_NUMBER}_Console_Jenkins_$(date +&quot;%Y.%m.%d&quot;).txt
-cd $W3AF_SCRIPT_FILE_PATH
-bash reporting.sh 
-
-
-#cd ${W3AF_FOLDER}
-#if [ -r ${W3AF_FOLDER}/${W3AF_TEST_RESULT} ]; then
-#      echo &quot; ==== Finish W3af process! ====&quot;     
-#  else
-#      echo &quot;==== Something wrong happens! Please check logs. ====&quot;
-#  fi
-
-WEEKLY_REPORT=&quot;/java/exo-working/security-testing_local/testsuite_secu/weekly_report&quot;
-PLF_LOG=&quot;/java/exo-working/security-testing_local/testsuite_secu/PLF_log&quot;
-cd $WEEKLY_REPORT
-if [ -d &quot;$(date +&quot;%Y-%m-%d&quot;)&quot; ]
-then
-        rm -R $(date +&quot;%Y-%m-%d&quot;)
-       mkdir $(date +&quot;%Y-%m-%d&quot;)
-else
-	mkdir $(date +&quot;%Y-%m-%d&quot;)
-fi
-
-chmod 777 $(date +&quot;%Y-%m-%d&quot;)
-cd $(date +&quot;%Y-%m-%d&quot;)
-cp ${W3AF_TEST_TARGET_DIR}W3af_TestTarget*.txt .
-cp $W3AF_FOLDER/output-w3af.* .
-cp $PLF_LOG/localhost_access_log*.txt .
-cp $W3AF_TEST_TARGET_DIR${JOB_NAME}_${BUILD_NUMBER}_Console_Jenkins_$(date +&quot;%Y.%m.%d&quot;).txt .
-cp ${W3AF_TEST_TARGET_DIR}report_$(date +&quot;%Y.%m.%d&quot;).txt .
-
-if [ ` ls -l ${W3AF_TEST_CONFIG_DIR}/*.w3af.*| grep -v output | wc -l ` -lt 2 ]; then
-  ssh qahudson@192.168.5.6 ! &quot;sed -i &apos;1d&apos; /home/qahudson/testsuite/${TEST_SCRIPT}_CURRENT_CONFIG&quot;
-fi</command>
+pushd /java/exo-working/w3af_auto/
+./w3af_auto_scan.sh</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
@@ -131,6 +70,6 @@ fi</command>
     </hudson.tasks.BuildTrigger>
   </publishers>
   <buildWrappers>
-    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.5.8"/>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.7.4"/>
   </buildWrappers>
 </project>

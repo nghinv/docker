@@ -79,6 +79,12 @@ fi</command>
         <completeBuild>true</completeBuild>
       </threshold>
     </hudson.tasks.BuildTrigger>
+    <hudson.plugins.descriptionsetter.DescriptionSetterPublisher plugin="description-setter@1.10">
+      <regexp>firstline=([^ \t]+) ([^ \t]+)!([^ \t]+) ([^ \t]+) ([^ \t]+) ([^ \t]+)!([^ \t]+)</regexp>
+      <regexpForFailed></regexpForFailed>
+      <description>\5 -&gt; \3 (\6 \4)</description>
+      <setForMatrix>false</setForMatrix>
+    </hudson.plugins.descriptionsetter.DescriptionSetterPublisher>
   </publishers>
   <buildWrappers>
     <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.16">

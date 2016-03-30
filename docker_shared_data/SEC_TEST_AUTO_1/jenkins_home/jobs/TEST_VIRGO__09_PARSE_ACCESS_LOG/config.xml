@@ -2,94 +2,50 @@
 <project>
   <actions/>
   <description></description>
-  <logRotator class="hudson.tasks.LogRotator">
-    <daysToKeep>90</daysToKeep>
-    <numToKeep>300</numToKeep>
-    <artifactDaysToKeep>-1</artifactDaysToKeep>
-    <artifactNumToKeep>-1</artifactNumToKeep>
-  </logRotator>
   <keepDependencies>false</keepDependencies>
   <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>90</daysToKeep>
+        <numToKeep>300</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
           <name>PLF_HOST</name>
           <description></description>
-          <defaultValue>http://192.168.5.6:8080/</defaultValue>
+          <defaultValue>http://localhost:8080/</defaultValue>
         </hudson.model.StringParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>DEBUG</name>
+          <description></description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>false</string>
+              <string>true</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
   <scm class="hudson.scm.NullSCM"/>
   <assignedNode>XSS-AUTO-1</assignedNode>
   <canRoam>false</canRoam>
-  <disabled>true</disabled>
+  <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <jdk>(Default)</jdk>
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
       <command>#!/bin/bash
 
-PARSER_DIR=&quot;/java/exo-working/security-testing_local/testsuite_secu/testscripts/&quot;
-ACCESS_LOG_DIR=&quot;/java/exo-working/security-testing/testsuite_secu/PLF_log/&quot;
-ACCESS_LOG=`cd ${ACCESS_LOG_DIR}; ls -ABrt1 --group-directories-first | tail -n1`
-W3AF_TEST_TARGET_DIR=&quot;/java/exo-working/security-testing_local/testsuite_secu/testscripts/Output&quot;; mkdir -p ${W3AF_TEST_TARGET_DIR}
-W3AF_TEST_TARGET=&quot;${W3AF_TEST_TARGET_DIR}/W3af_TestTarget_$(date +&quot;%Y-%m-%d&quot;).txt&quot;
-TEST_PATTERN=&quot;${PARSER_DIR}/test_pattern.txt&quot;
-
-
-cd ${PARSER_DIR}
-echo &quot;==== WAITING FOR THE FILTERING PROCESS FINISHED ====&quot;
-bash parser.sh -i ${ACCESS_LOG_DIR}/${ACCESS_LOG} -o ${W3AF_TEST_TARGET} -h &quot;${PLF_HOST}&quot;
-echo &quot;==== Filter URLs ====&quot;
-while read j
-do
-if [[ ! &quot;x$j&quot; == &quot;x&quot; &amp;&amp; ! -z $j ]]; then
- j=`echo $j | sed &apos;s|/|\\\/|g;s|?|\\\?|g;s|=|\\\=|g&apos;`
-echo &quot;... ++ processing with pattern: $j&quot;
-sed -i -r &quot;0,/$j/s/($j)/ \1/&quot; $W3AF_TEST_TARGET
-sed -i -r &quot;/$j/d&quot; $W3AF_TEST_TARGET
-echo &quot;... -- processing with pattern: $j&quot;
-fi
-done &lt;$TEST_PATTERN
-
-cd ${W3AF_TEST_TARGET_DIR}
- if [ -r ${W3AF_TEST_TARGET} ]; then
-      echo &quot; ==== Finish filtering process ====&quot;     
- else
-      echo &quot;==== Something wrong happens! Restart the parser! ====&quot;
-      bash parser.sh -i ${ACCESS_LOG_DIR}/${ACCESS_LOG} -o ${W3AF_TEST_TARGET} -h ${PLF_HOST}
-     echo &quot;==== Filter URLs ====&quot;
-     while read j
-     do
-      	 if [[ ! &quot;x$j&quot; == &quot;x&quot; &amp;&amp; ! -z $j ]]; then
-	  j=`echo $j | sed &apos;s|/|\\\/|g;s|?|\\\?|g;s|=|\\\=|g&apos;`
-	  echo &quot;... ++ processing with pattern: $j&quot;
-	  sed -i -r &quot;0,/$j/s/($j)/ \1/&quot; $W3AF_TEST_TARGET
-	  sed -i -r &quot;/$j/d&quot; $W3AF_TEST_TARGET
-	  echo &quot;... -- processing with pattern: $j&quot;
-	 fi
-      done &lt;$TEST_PATTERN
-
- fi
-
-:&lt;&lt;COMMENT
-
-#Move URLs without parameters to the end of file so that when scanning, those URLs will be scanned first
-	grep &quot;?&quot; $W3AF_TEST_TARGET | sort &gt; URL_param
-	echo &quot;++URL with parameters = &quot;$(wc -l URL_param | awk &apos;{ print $1}&apos;)	
-	
-	sed &apos;/?/d&apos; $W3AF_TEST_TARGET | sort &gt; URL_no_param
-	echo &quot;++URL without parameters = &quot;$(wc -l URL_no_param | awk &apos;{ print $1}&apos;)
-	
-	cat URL_param URL_no_param &gt; $W3AF_TEST_TARGET
-	
-	rm URL_param
-	rm URL_no_param
-COMMENT</command>
+pushd /java/exo-working/w3af_auto/
+bash ./w3af_auto_parse_access_log.sh</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>

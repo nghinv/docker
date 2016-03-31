@@ -63,6 +63,24 @@ if [ -d $EXO_WORKING_DIR ]; then
   if [ ! -d w3af_auto ]; then
     echo &quot;INFO: w3af_auto&quot;
     git clone https://github.com/nghinv/w3af_auto.git
+    pushd w3af_auto
+
+    mkdir tools
+    git clone https://github.com/nghinv/w3af.git
+    mkdir tools/dependencies
+    cd tools/dependencies
+    echo &quot;... install w3af dependencies: &quot;
+    apt-get update
+    echo &quot;... install w3af dependencies: python-soappy python-lxml python-svn python-scapy&quot;
+    apt-get install python-soappy python-lxml python-svn python-scapy
+    apt-get install python-openssl
+
+    echo &quot;... install w3af dependencies: nltk-2.0b9.tar.gz, pybloomfiltermmap-0.2.0.tar.gz, PyYAML-3.09.tar.gz&quot;
+    wget https://pypi.python.org/packages/source/n/nltk/nltk-2.0b9.tar.gz &amp;&amp; tar xf nltk-2.0b9.tar.gz &amp;&amp; cd nltk-2.0b9 &amp;&amp; python setup.py install
+    wget https://pypi.python.org/packages/source/p/pybloomfiltermmap/pybloomfiltermmap-0.2.0.tar.gz &amp;&amp; tar xf pybloomfiltermmap-0.2.0.tar.gz &amp;&amp; cd pybloomfiltermmap-0.2.0 &amp;&amp; python setup.py install
+    wget http://pyyaml.org/download/pyyaml/PyYAML-3.09.tar.gz &amp;&amp; tar xf PyYAML-3.09.tar.gz &amp;&amp; cd PyYAML-3.09 &amp;&amp; python setup.py install
+
+    popd
   fi
 
   #download firefox
@@ -120,6 +138,8 @@ if [ -d $EXO_WORKING_DIR ]; then
     echo &quot;INFO: ${EXO_WORKING_DIR}/TC/current/ is now ready to run&quot;
     popd #to EXO_WORKING_DIR
     
+    mkdir $HOME/.eXo/Platform/ || true
+    cp ${EXO_WORKING_DIR}/automation_xss_tc/testsuite/plf_templates/datasets/plf43comm/license.xml $HOME/.eXo/Platform/
     echo &quot;${EXO_WORKING_DIR}/TC/current/ RE_USE!SAMPLES 3600 SAMPLE_TEST_WITH_PLF43 SHOULD_WORK!eXoPLF.install.sh&quot; &gt; ${EXO_WORKING_DIR}/automation_xss_tc/testsuite/TEST_VIRGO_CURRENT_CONFIG
   fi
 else

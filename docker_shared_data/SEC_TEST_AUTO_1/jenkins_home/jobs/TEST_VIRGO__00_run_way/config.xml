@@ -59,6 +59,12 @@ if [ -d $EXO_WORKING_DIR ]; then
     git clone https://github.com/nghinv/automation_xss_tc_new.git 
     ln -s automation_xss_tc_new automation_xss_tc
   fi
+
+  if [ ! -d w3af_auto ]; then
+    echo &quot;INFO: w3af_auto&quot;
+    git clone https://github.com/nghinv/w3af_auto.git
+  fi
+
   #download firefox
   if [ ! -f firefox-21.0b7.tar.bz2 ]; then
     if [ ! -d firefox21 ]; then

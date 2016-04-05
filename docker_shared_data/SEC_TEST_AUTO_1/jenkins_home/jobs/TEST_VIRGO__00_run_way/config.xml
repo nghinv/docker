@@ -168,7 +168,7 @@ fi</command>
   <buildWrappers>
     <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.16">
       <strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
-        <timeoutMinutes>5</timeoutMinutes>
+        <timeoutMinutes>150</timeoutMinutes>
       </strategy>
       <operationList>
         <hudson.plugins.build__timeout.operations.FailOperation/>

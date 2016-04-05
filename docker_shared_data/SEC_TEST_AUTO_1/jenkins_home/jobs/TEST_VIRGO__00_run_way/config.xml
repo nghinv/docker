@@ -144,7 +144,7 @@ if [ -d $EXO_WORKING_DIR ]; then
     echo &quot;INFO: ${EXO_WORKING_DIR}/TC/current/ is now ready to run&quot;
     popd #to EXO_WORKING_DIR
     
-    mkdir $HOME/.eXo/Platform/ || true
+    mkdir -p $HOME/.eXo/Platform/ || true
     cp ${EXO_WORKING_DIR}/automation_xss_tc/testsuite/plf_templates/datasets/plf43comm/license.xml $HOME/.eXo/Platform/
     echo &quot;${EXO_WORKING_DIR}/TC/current/ RE_USE!SAMPLES 3600 SAMPLE_TEST_WITH_PLF43 SHOULD_WORK!eXoPLF.install.sh&quot; &gt; ${EXO_WORKING_DIR}/automation_xss_tc/testsuite/TEST_VIRGO_CURRENT_CONFIG
   fi
@@ -168,7 +168,7 @@ fi</command>
   <buildWrappers>
     <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.16">
       <strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
-        <timeoutMinutes>150</timeoutMinutes>
+        <timeoutMinutes>5</timeoutMinutes>
       </strategy>
       <operationList>
         <hudson.plugins.build__timeout.operations.FailOperation/>

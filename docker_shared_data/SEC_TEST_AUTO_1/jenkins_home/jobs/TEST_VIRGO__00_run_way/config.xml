@@ -72,6 +72,7 @@ if [ -d $EXO_WORKING_DIR ]; then
     if [ ! -d w3af ]; then
       echo &quot;INFO: w3af_auto&quot;
       git clone https://github.com/nghinv/w3af.git
+      git checkout 1.1 -b 1.1
     fi
     mkdir dependencies
     cd dependencies
